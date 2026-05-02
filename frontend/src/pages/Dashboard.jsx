@@ -26,7 +26,11 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
+
     fetchData();
+    const intervalId = setInterval(fetchData, 5000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   if (loading) return <div className="p-8 flex justify-center"><div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div></div>;
