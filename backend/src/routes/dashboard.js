@@ -3,6 +3,7 @@ const { verifyToken } = require('../middleware/auth');
 const RequestLog = require('../models/RequestLog');
 const ApiEndpoint = require('../models/ApiEndpoint');
 const Subscription = require('../models/Subscription');
+const { getUsage } = require('../services/usageTracker');
 
 const router = express.Router();
 
@@ -21,8 +22,10 @@ router.get('/stats', async (req, res) => {
     startOfToday.setHours(0, 0, 0, 0);
     const requestsToday = await RequestLog.countDocuments({ userId, timestamp: { $gte: startOfToday } });
 
+    const liveTotalUsage = await getUsage(userId);
+
     res.json({
-      totalRequestsUsed: subscription ? subscription.requestsUsed : 0,
+      totalRequestsUsed: liveTotalUsage,
       requestsToday,
       activeApis: activeApisCount,
       currentPlan: subscription ? subscription.plan : 'free',
