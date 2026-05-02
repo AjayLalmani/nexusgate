@@ -29,7 +29,8 @@ router.post('/create-checkout', verifyToken, async (req, res) => {
     await subscription.save();
 
     // Since we are simulating, we just send a success URL to redirect the frontend
-    res.json({ url: `${process.env.FRONTEND_URL}/billing?success=true&plan=${plan}` });
+    const frontendUrl = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.json({ url: `${frontendUrl}/billing?success=true&plan=${plan}` });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -38,7 +39,8 @@ router.post('/create-checkout', verifyToken, async (req, res) => {
 // Mock Stripe Portal
 router.get('/portal', verifyToken, async (req, res) => {
   // Dummy portal URL
-  res.json({ url: `${process.env.FRONTEND_URL}/settings` });
+  const frontendUrl = req.headers.origin || process.env.FRONTEND_URL || 'http://localhost:5173';
+  res.json({ url: `${frontendUrl}/settings` });
 });
 
 // Webhook for Stripe (Keep this for structure, even if dummy)
